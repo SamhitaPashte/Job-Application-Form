@@ -1,0 +1,604 @@
+//APPLYSERVLET.JAVA CODE
+
+package com.project;
+import java.io.*;
+import java.sql.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class ApplyServlet extends HttpServlet{
+	
+	public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException{
+		
+		res.setContentType("text/html");
+		PrintWriter out = res.getWriter();		
+		
+		String first_name = req.getParameter("first_name");
+		String last_name = req.getParameter("last_name");		
+		String user_email = req.getParameter("user_email");
+		String contact_number = req.getParameter("contact_number");
+		String user_gender = req.getParameter("user_gender");
+		String birthday = req.getParameter("birthday");
+		String location = req.getParameter("location");
+		String address = req.getParameter("address");
+		String qualification = req.getParameter("qualification");
+		String time = req.getParameter("time");
+		String university = req.getParameter("university");
+		String current_employer = req.getParameter("current_employer");
+		String work_exp = req.getParameter("work_exp");
+		String salary = req.getParameter("salary");
+		String designation = req.getParameter("designation");
+		String notice_period = req.getParameter("notice_period");
+		String yesno = req.getParameter("yesno");
+		String position = req.getParameter("position");
+		String filename = req.getParameter("filename");
+		//String[] course = req.getParameterValues("course");
+		
+		GetSet gs = new GetSet();
+		gs.setFirst_name(first_name);
+		gs.setLast_name(last_name);
+		gs.setUser_email(user_email);
+		gs.setContact_number(contact_number);
+		gs.setUser_gender(user_gender);
+		gs.setBirthday(birthday);
+		gs.setLocation(location);
+		gs.setAddress(address);
+		gs.setQualification(qualification);
+		gs.setTime(time);
+		gs.setUniversity(university);
+		gs.setCurrent_employer(current_employer);
+		gs.setWork_exp(work_exp);
+		gs.setSalary(salary);
+		gs.setDesignation(designation);
+		gs.setNotice_period(notice_period);
+		gs.setYesno(yesno);
+		gs.setPosition(position);
+		gs.setFilename(filename);
+		
+		//DaoJob dj = new DaoJob();
+		String register = DaoJob.insert(gs);
+		res.getWriter().print(register);
+		         
+        out.close();
+				
+		//out.print(" <h2> Skills chosen: </h2>");
+		//for(int i = 0; i < skills.length; i++){
+			//out.println(skills[i] + " ");
+		}
+		
+	}
+	
+//DAOJOB.JAVA CODE
+
+package com.project;
+import java.util.*; 
+import java.io.*; 
+import java.sql.*;  
+
+public class DaoJob {
+	
+	private static String url = "jdbc:mysql://localhost:3306/demoproject";
+	private static String password = "root";
+	private static String uname = "root";
+	private static String driver = "com.mysql.cj.jdbc.Driver";
+	
+	public static void loadDriver(String driver){
+		
+		try {
+			Class.forName(driver);
+		} 
+		
+		catch (ClassNotFoundException e) {
+			
+			e.printStackTrace();
+		}		
+	}
+	
+	public static Connection getConnection(){
+		
+		Connection con = null;
+		try {
+			con = DriverManager.getConnection(url, uname, password);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return con;
+	}
+	
+	public static String insert(GetSet gs){
+		
+		loadDriver(driver);
+		Connection con = getConnection();
+		String sql =  "INSERT INTO job_details(first_name, last_name, email_id, contact,"
+				+ "gender, dob, location, address, qualification, qual_type, university," 
+				+ "current_employer, experience, salary, designation, notice,"
+				+ " for_us_before, pos_applied, filename) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		//int status=0; 
+		String result = "Data entered successfully";
+		
+		
+		PreparedStatement ps;
+		try {
+			ps = con.prepareStatement(sql);
+			ps.setString(1, gs.getFirst_name());
+			ps.setString(2, gs.getLast_name());
+			ps.setString(3, gs.getUser_email());
+			ps.setString(4, gs.getContact_number());
+			ps.setString(5, gs.getUser_gender());
+			ps.setString(6, gs.getBirthday());
+			ps.setString(7, gs.getLocation());
+			ps.setString(8, gs.getAddress());
+			ps.setString(9, gs.getQualification());
+			ps.setString(10, gs.getTime());
+			ps.setString(11, gs.getUniversity());
+			ps.setString(12, gs.getCurrent_employer());
+			ps.setString(13, gs.getWork_exp());						
+			ps.setString(14, gs.getSalary());
+			ps.setString(15, gs.getDesignation());
+			ps.setString(16, gs.getNotice_period());
+			ps.setString(17, gs.getYesno());
+			ps.setString(18, gs.getPosition());
+			ps.setString(19, gs.getFilename());
+						
+			ps.executeUpdate();
+			con.close(); 
+		} 
+		catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = "Application submission unsuccessful. The mobile number/email id already exists in our database";
+		}
+		
+		
+		return result;
+	}
+
+}
+
+//GETSET.JAVA CODE
+
+package com.project;
+
+public class GetSet {
+	
+	private String first_name, last_name, user_email, user_gender, salary, designation, notice_period, yesno;
+	private String birthday, location, address, qualification, time, university, current_employer, work_exp;
+	private String position, contact_number, filename;
+	//String[] course;		
+					
+	
+	public String getFirst_name() {
+		return first_name;
+	}
+	public void setFirst_name(String first_name) {
+		this.first_name = first_name;
+	}
+	public String getLast_name() {
+		return last_name;
+	}
+	public void setLast_name(String last_name) {
+		this.last_name = last_name;
+	}
+	public String getUser_email() {
+		return user_email;
+	}
+	public void setUser_email(String user_email) {
+		this.user_email = user_email;
+	}
+	public String getUser_gender() {
+		return user_gender;
+	}
+	public void setUser_gender(String user_gender) {
+		this.user_gender = user_gender;
+	}
+	public String getSalary() {
+		return salary;
+	}
+	public void setSalary(String salary) {
+		this.salary = salary;
+	}
+	public String getDesignation() {
+		return designation;
+	}
+	public void setDesignation(String designation) {
+		this.designation = designation;
+	}
+	public String getNotice_period() {
+		return notice_period;
+	}
+	public void setNotice_period(String notice_period) {
+		this.notice_period = notice_period;
+	}
+	public String getYesno() {
+		return yesno;
+	}
+	public void setYesno(String yesno) {
+		this.yesno = yesno;
+	}
+	public String getBirthday() {
+		return birthday;
+	}
+	public void setBirthday(String birthday) {
+		this.birthday = birthday;
+	}
+	public String getLocation() {
+		return location;
+	}
+	public void setLocation(String location) {
+		this.location = location;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	public String getQualification() {
+		return qualification;
+	}
+	public void setQualification(String qualification) {
+		this.qualification = qualification;
+	}
+	public String getTime() {
+		return time;
+	}
+	public void setTime(String time) {
+		this.time = time;
+	}
+	public String getUniversity() {
+		return university;
+	}
+	public void setUniversity(String university) {
+		this.university = university;
+	}
+	public String getCurrent_employer() {
+		return current_employer;
+	}
+	public void setCurrent_employer(String current_employer) {
+		this.current_employer = current_employer;
+	}
+	public String getWork_exp() {
+		return work_exp;
+	}
+	public void setWork_exp(String work_exp) {
+		this.work_exp = work_exp;
+	}
+	public String getPosition() {
+		return position;
+	}
+	public void setPosition(String position) {
+		this.position = position;
+	}
+	public String getFilename() {
+		return filename;
+	}
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+	/*public String[] getCourse() {
+		return course;
+	}
+	public void setCourse(String[] course) {
+		this.course = course;
+	} */
+	public String getContact_number() {
+		return contact_number;
+	}
+	public void setContact_number(String contact_number) {
+		this.contact_number = contact_number;
+	}	
+}
+
+//WEB.XML FILE CODE
+
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+  <display-name>Job Application Form</display-name>
+  
+  <servlet>
+  	<servlet-name> Apply </servlet-name>
+  	<servlet-class> com.project.ApplyServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name> Apply </servlet-name>
+  	<url-pattern> /ApplyServlet</url-pattern>
+  </servlet-mapping>
+  
+  <welcome-file-list>
+    <welcome-file>home.jsp</welcome-file>
+    
+  </welcome-file-list>
+</web-app>
+
+//HOME.JSP CODE
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Career Page</title>
+	<style>
+		body{				
+				background: url(ofc5.jpg);
+				background-size: cover ;
+				background-repeat: no-repeat;
+			}			
+		.content{
+				width:100%;
+				position: absolute;
+				top: 1%;				
+				text-align: center;
+				color: black;				
+		}
+		.content h1{
+			font-size: 45px;
+			margin-top: 50px;
+		}
+		
+		content p{
+			margin: 20px auto;
+			font-weight: 100;
+			line-height: 25px;			
+		}
+		
+		button{
+			width: 100px;
+			padding: 25px, 0;
+			text-align: center;
+			margin: 20px 10px;
+			border-radius: 25px;
+			font-weight:bold;
+			border: 4px solid #009688;
+			background: transparent;
+			color: white;
+			cursor: pointer;
+			position: relative;
+			overflow: hidden;
+		}
+		
+		span{
+			background: #009688;
+			height: 100%;
+			width: 100%;
+			border-radius: 25px;
+			position: absolute;
+			left: 0;
+			bottom: 0;
+			z-index: -1;
+		}
+	</style>
+</head>
+<body>
+	<div class= "content">
+		<h1 style="font-family:verdana;"> JOIN A TEAM THAT CELEBRATES EACH OTHER &#128516</h1> 
+		<p style="font-family:verdana;"> We are on a lookout for motivated, curious and creative people who are super excited about</p>
+		<p style="font-family:verdana;">transforming the way businesses use video to communicate. Let's create something great together.</p>
+			<div>
+				
+				<button type= "button"><a href="index.jsp"><span> </span>Apply Now</a></button>
+				
+			</div>
+	</div>
+</body>
+</html>
+
+//INDEX.JSP CODE
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Form Page</title>
+
+	<style>
+		.job-form{
+			width: 85%;
+			max-width: 900px;
+			background: #f1f1f1;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%,-18%);
+			padding: 20px;
+			box-sizing: border-box;
+			border-radius: 8px;
+			box-shadow: 0 0 20px #000000b3;
+			font-family: "Montserrat", sans-serif;			
+			text-align: left;
+		}
+		
+		.job-form h1{
+			margin-top: 0;
+		}
+		
+		#myform table tr td input{
+			font-size: 15px;
+		}
+		body{
+			margin: 0;
+			padding: 0;
+			background: url(hiring.jpg);
+			background-size:25%;
+			background-repeat: no-repeat;
+		}
+		
+		.button1{
+			width: 100px;
+			padding: 25px, 0;
+			text-align: center;
+			margin: 10px 1100px;
+			border-radius: 25px;
+			font-weight:bold;
+			border: 4px solid #009688;
+			background: transparent;
+			color: white;
+			cursor: pointer;
+			position: relative;
+			overflow: hidden;
+		}
+		
+		span{
+			background: #009688;
+			height: 100%;
+			width: 100%;
+			border-radius: 25px;
+			position: absolute;
+			left: 0;
+			bottom: 0;
+			z-index: -1;
+		}
+	</style>		
+
+</head>
+<body>
+
+	<div class= "button1">				
+		<button type= "button"><a href="home.jsp"><span> </span>Go back</a></button>				
+	</div>
+	
+	<div class = "job-form">
+	<h1 align = "center"> JOB APPLICATION FORM </h1>
+	
+	<form action = "ApplyServlet" method = "POST" enctype = "multipart/form-data">
+	
+	<table cellspacing = "15" bgcolor: "pink";>
+		<tr>
+			<td style="font-size:20px"> <b>First Name:</b> </td>
+			<td> <input type = "text" name = "first_name" placeholder = "Enter first name" required/></td>			</div>
+		</tr> 
+		
+		<tr>
+			<td style="font-size:20px"><b> Last Name: </b></td>
+			<td> <input type = "text" name = "last_name" placeholder = "Enter last name" required/></td>
+		</tr>
+		
+		<tr>
+			<td style="font-size:20px"><b> Enter Your Email: </b></td>
+			<td> <input type = "email" name = "user_email" placeholder = "Enter email here" required/></td>
+		</tr>
+		<tr>
+			<td style="font-size:20px"><b> Contact number: </b></td>
+			<td> <input type = "text" name = "contact_number" placeholder = "Enter mobile number" required/></td>
+		</tr>	
+								
+		<tr>
+			<td style="font-size:20px"><b> Select Gender:</b> </td>
+			<td> <input type = "radio" name = "user_gender" value = "Male" required/>Male<br>
+			<input type = "radio" name = "user_gender" value = "Female" required/>Female </td>
+		</tr>	
+		
+		<tr>
+			<td style="font-size:20px"> <label for="birthday"><b>Date of birth:</b></label></td>
+			<td><input type="date" id="birthday" name="birthday"></td>
+		</tr>
+			
+		<tr>
+			<td style="font-size:20px"><b> Your location: </b></td>
+			<td> 
+				<select name = "location">
+					<option value = "Select location"> Select your current location: </option>
+					<option value = "East"> East </option>
+					<option value = "West"> West </option>
+					<option value = North"> North </option>
+					<option value = "South"> South </option>
+				</select>
+			</td>
+		</tr>
+		
+		<tr>
+			<td style="font-size:20px"><label for="Address"><b>Address:</b></label></td>	
+			<td><textarea id="address" name="address" rows = "4" cols = "50">
+  			</textarea></td>
+		</tr>
+		
+		<tr>
+			<td style="font-size:20px"> <b>Highest Qualification: </b></td>
+			<td> 
+				<select name = "qualification">
+				<option value = "Select qualification"> Select your highest qualification </option>
+					<option value = "Ph.D"> Ph.D </option>
+					<option value = "Post graduate"> Post Graduate </option>
+					<option value = "Graduate"> Graduate </option>
+					<option value = "Diploma"> Diploma </option>
+				</select>
+			</td>
+		</tr>				
+		
+		<tr>
+			<td style="font-size:20px"><b> Qualification type: </b></td>
+			 <td><input type = "radio" name = "time" value = "Full-time" required/> Full-time<br> 
+			 <input type = "radio" name = "time" value = "Part-time" required/> Part-time<br> 
+			 <input type = "radio" name = "time" value = "Executive program" required/>Executive program </td>
+		</tr>
+		
+		<tr>
+			<td style="font-size:20px"> <b>University:</b> </td>
+			<td> <input type = "text" name = "university" placeholder = "Enter University name" required/></td>
+		</tr>
+		
+		<tr>
+			<td style="font-size:20px"> <b>Current employer: </b></td>
+			<td> <input type = "text" name = "current_employer" placeholder = "Put N.A if not applicable" required/></td>
+		</tr>
+		
+		<tr>
+			<td style="font-size:20px"><b> No. of years of experience: </b></td>
+			<td> <input type = "text" name = "work_exp" required/></td>
+		</tr>
+		
+		<tr>
+			<td style="font-size:20px"> <b>Current Salary: </b></td>
+			<td> <input type = "text" name = "salary" required/></td>
+		</tr>
+		
+		<tr>
+			<td style="font-size:20px"><b>Current designation:</b> </td>
+			<td> <input type = "text" name = "designation" required/></td>
+		</tr>
+		
+		<tr>
+			<td style="font-size:20px"><b> Notice Period (In days):</b> </td>
+			<td> <input type = "text" name = "notice_period" required/></td>
+		</tr>
+		
+		<tr>
+			<td style="font-size:20px"> <b>Have you worked for us before? </b></td>
+			 <td> <input type="radio" id="yes" name="yesno" value="yes"> 
+			  <label for="yes"> Yes</label><br>
+			   <input type="radio" id="no" name="yesno" value="no">
+			   <label for="no"> No</label></td> 
+			   
+		</tr>		
+
+		<tr>
+			<td style="font-size:20px"><b>Which position are you applying for?</b> </td>
+			<td> <input type = "text" name = "position" required/></td>
+		</tr>
+		
+		<tr>
+			<td style="font-size:20px"><b>Upload your resume: </b></td>
+			<td><input type="file" id="myFile" name="filename"/></td>
+		</tr>
+		
+		<tr>
+			<td> </td>
+			<td style="font-size:20px">
+				<button type = "submit"> Submit </button>
+				<button type = "reset"> Reset </button>
+			</td>
+			 
+		</tr>		
+	</table>
+	
+	</form>
+	</div>
+</body>
+</html>
+
